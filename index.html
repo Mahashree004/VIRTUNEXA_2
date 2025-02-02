@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e3a8a;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2 {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            color: #000;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #16a34a;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #15803d;
+        }
+
+        .goal-history {
+            width: 90%;
+            max-width: 400px;
+            margin-top: 20px;
+        }
+
+        .goal-card {
+            background-color: #f3f4f6;
+            color: #000;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .goal-details {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .progress-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 5px solid #22c55e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #22c55e;
+        }
+
+        .delete-btn {
+            background-color: #dc2626;
+            color: white;
+            padding: 5px 10px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #b91c1c;
+        }
+
+        .clear-btn {
+            background-color: #dc2626;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .clear-btn:hover {
+            background-color: #b91c1c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Track your goals efficiently!</h1>
+    <div class="container">
+        <h2>Set Your Goal</h2>
+        <div class="form-group">
+            <input type="text" id="goal-name" placeholder="Enter goal name">
+        </div>
+        <div class="form-group">
+            <input type="number" id="target-amount" placeholder="Enter target amount">
+        </div>
+        <div class="form-group">
+            <input type="number" id="progress-amount" placeholder="Enter progress amount">
+        </div>
+        <div class="form-group">
+            <input type="date" id="deadline">
+        </div>
+        <button onclick="addGoal()">Set Goal</button>
+    </div>
+
+    <h2>Goal History</h2>
+    <div class="goal-history" id="goal-history"></div>
+    <button class="clear-btn" onclick="clearHistory()">Clear Goal History</button>
+
+    <script>
+        let goals = [];
+
+        function addGoal() {
+            const goalName = document.getElementById('goal-name').value;
+            const targetAmount = document.getElementById('target-amount').value;
+            const progressAmount = document.getElementById('progress-amount').value;
+            const deadline = document.getElementById('deadline').value;
+
+            if (!goalName || !targetAmount || !progressAmount || !deadline) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const progressPercentage = Math.min((progressAmount / targetAmount) * 100, 100);
+
+            const goal = {
+                name: goalName,
+                target: targetAmount,
+                progress: progressAmount,
+                deadline: deadline,
+                percentage: progressPercentage.toFixed(0),
+            };
+
+            goals.push(goal);
+            renderGoals();
+        }
+
+        function deleteGoal(index) {
+            goals.splice(index, 1);
+            renderGoals();
+        }
+
+        function clearHistory() {
+            goals = [];
+            renderGoals();
+        }
+
+        function renderGoals() {
+            const goalHistory = document.getElementById('goal-history');
+            goalHistory.innerHTML = '';
+
+            goals.forEach((goal, index) => {
+                const goalCard = document.createElement('div');
+                goalCard.className = 'goal-card';
+
+                goalCard.innerHTML = `
+                    <div class="goal-details">
+                        <p><strong>${goal.name}</strong></p>
+                        <p>Target: ${goal.target}</p>
+                        <p>Progress: ${goal.progress}</p>
+                        <p>Deadline: ${goal.deadline}</p>
+                    </div>
+                    <div class="progress-circle">${goal.percentage}%</div>
+                    <button class="delete-btn" onclick="deleteGoal(${index})">Delete</button>
+                `;
+
+                goalHistory.appendChild(goalCard);
+            });
+        }
+    </script>
+</body>
+</html>
